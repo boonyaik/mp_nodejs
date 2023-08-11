@@ -1,0 +1,69 @@
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+
+  // Initialize the chart with empty data
+  const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: [], // Empty labels
+      datasets: [{
+        label: '# of Votes',
+        data: [], // Empty data
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Fetch data from the server using AJAX
+  function fetchDataAndUpdateChart() {
+    // Create a new XMLHttpRequest object
+    var xhr = new XMLHttpRequest();
+
+    // Configure the request
+    xhr.open('GET', 'http://192.168.141.128:3000/chartdata', true);
+
+    // Set up the onload event
+    xhr.onload = function() {
+      if (this.status === 200) {
+        // Parse the fetched data
+        const responseData = JSON.parse(this.responseText);
+
+        // Update the chart's data
+        myChart.data.labels = responseData.labels;
+        myChart.data.datasets[0].data = responseData.data;
+
+        // Refresh the chart
+        myChart.update();
+      } else {
+        console.error('Error fetching chart data');
+      }
+    };
+
+    // Set up the onerror event
+    xhr.onerror = function() {
+      console.error('Error fetching chart data');
+    };
+
+    // Send the request
+    xhr.send();
+  }
+
+  // Call the fetchDataAndUpdateChart function to fetch and update the chart data
+  fetchDataAndUpdateChart();
+
+  // Optional: Set an interval to update the chart data periodically
+  setInterval(fetchDataAndUpdateChart, 2000);
+</script>
+

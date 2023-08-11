@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Demo</title>
+    <script>
+        function fetchData() {
+            // Create a new XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            // Configure the request
+            xhr.open('GET', 'http://192.168.141.128:3000/getdata', true);
+
+            // Set up the onload function
+            xhr.onload = function() {
+                console.log(this.status)
+                if (this.status === 200) {
+                    // Parse the returned data
+                    var post = JSON.parse(this.responseText);
+
+                    // Display the data in the output div
+                    var output = `
+                        <h2>${post.title}</h2>
+                        <p>${post.body}</p>
+                    `;
+
+                    document.getElementById('output').innerHTML = output;
+                } else {
+                    document.getElementById('output').innerHTML = 'Error fetching data.';
+                }
+            };
+
+            // Handle any errors
+            xhr.onerror = function() {
+                document.getElementById('output').innerHTML = 'Request failed.';
+            };
+
+            // Send the request
+            xhr.send();
+        }
+
+	setInterval(fetchData,2000);
+    </script>
+</head>
+<body>
+
+<h1>AJAX Demo</h1>
+<button onclick="fetchData()">Load Data</button>
+<div id="output"></div>
+
+</body>
+</html>
+
